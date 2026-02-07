@@ -1,35 +1,31 @@
 package com.hostel.recipe.controller;
 
-import com.hostel.recipe.entity.Recipe;
-import com.hostel.recipe.service.RecipeService;
-import org.springframework.web.bind.annotation.*;
 import com.hostel.recipe.dto.RecipeSubmitRequestDTO;
 import com.hostel.recipe.dto.RecipeResponseDTO;
+import com.hostel.recipe.service.RecipeService;
 import jakarta.validation.Valid;
-
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/recipes")
-public class AdminRecipeController {
+public class RecipeController {
+
     private final RecipeService recipeService;
 
-    public AdminRecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
     @PostMapping("/submit")
-    public Recipe submitRecipe(@RequestBody Recipe recipe) {
-        return recipeService.submitRecipe(recipe);
-    }
-    @GetMapping
-    public List<Recipe> getAllApprovedRecipe() {
-        return recipeService.getApprovedRecipe();
-    }
-    @PutMapping("/{id}/reject")
-    public Recipe rejectRecipe(@PathVariable Long id) {
-        return recipeService.rejectRecipe(id);
+    public RecipeResponseDTO submitRecipe(
+            @Valid @RequestBody RecipeSubmitRequestDTO request) {
+        return recipeService.submitRecipe(request);
     }
 
+    @GetMapping
+    public List<RecipeResponseDTO> getAllApprovedRecipes() {
+        return recipeService.getApprovedRecipes();
+    }
 }
