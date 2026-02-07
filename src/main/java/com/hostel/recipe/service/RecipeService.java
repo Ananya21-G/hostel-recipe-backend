@@ -1,29 +1,39 @@
 package com.hostel.recipe.service;
 
+import com.hostel.recipe.dto.RecipeResponseDTO;
+import com.hostel.recipe.dto.RecipeSubmitRequestDTO;
 import com.hostel.recipe.entity.Recipe;
 import com.hostel.recipe.entity.RecipeStatus;
 import com.hostel.recipe.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
+
     private final RecipeRepository recipeRepository;
 
     public RecipeService(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
 
-    public Recipe submitRecipe(Recipe recipe) {
-        recipe.setStatus(RecipeStatus.PENDING);
-        return recipeRepository.save(recipe);
+
+    public RecipeResponseDTO submitRecipe(RecipeSubmitRequestDTO request) {
+        Recipe recipe = mapToEntity(request);
+        Recipe savedRecipe = recipeRepository.save(recipe);
+        return mapToResponseDTO(savedRecipe);
     }
-    public List<Recipe> getApprovedRecipe() {
-        return recipeRepository.findByStatus(RecipeStatus.APPROVED);
+
+    public List<RecipeResponseDTO> getApprovedRecipes() {
+        return recipeRepository.findByStatus(RecipeStatus.APPROVED)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
-    public Recipe rejectRecipe(Long recipeId) {
+
+    public RecipeResponseDTO rejectRecipe(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
 
@@ -32,7 +42,27 @@ public class RecipeService {
         }
 
         recipe.setStatus(RecipeStatus.REJECTED);
-        return recipeRepository.save(recipe);
+        Recipe savedRecipe = recipeRepository.save(recipe);
+        return mapToResponseDTO(savedRecipe);
     }
 
+    private Recipe mapToEntity(RecipeSubmitRequestDTO dto) {
+        Recipe recipe = new Recipe();
+        recipe.setTitle(dto.getTitle());
+        recipe.setIngredients(dto.getIngredients());
+        recipe.setSteps(dto.getSteps());
+        recipe.setCookTime(dto.getCookTime());
+        recipe.setStatus(RecipeStatus.PENDING);
+        return recipe;
+    }
+
+    private RecipeResponseDTO mapToResponseDTO(Recipe recipe) {
+        RecipeResponseDTO dto = new RecipeResponseDTO();
+        dto.setId(recipe.getId());
+        dto.setTitle(recipe.getTitle());
+        dto.setIngredients(recipe.getIngredients());
+        dto.setSteps(recipe.getSteps());
+        dto.setCookTime(recipe.getCookTime());
+        return dto;
+    }
 }
