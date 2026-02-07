@@ -8,10 +8,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/recipes")
-public class RecipeController {
+public class AdminRecipeController {
     private final RecipeService recipeService;
 
-    public RecipeController(RecipeService recipeService) {
+    public AdminRecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
@@ -22,5 +22,9 @@ public class RecipeController {
     @GetMapping
     public List<Recipe> getAllApprovedRecipe() {
         return recipeService.getApprovedRecipe();
+    }
+    @PutMapping("/{id}/reject")
+    public Recipe rejectRecipe(@PathVariable Long id) {
+        return recipeService.rejectRecipe(id);
     }
 }

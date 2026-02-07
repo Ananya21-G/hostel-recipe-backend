@@ -20,7 +20,19 @@ public class RecipeService {
         recipe.setStatus(RecipeStatus.PENDING);
         return recipeRepository.save(recipe);
     }
-    public list<Recipe> getApprovedRecipe() {
+    public List<Recipe> getApprovedRecipe() {
         return recipeRepository.findByStatus(RecipeStatus.APPROVED);
     }
+    public Recipe rejectRecipe(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        if (recipe.getStatus() != RecipeStatus.PENDING) {
+            throw new RuntimeException("Only pending recipes can be rejected");
+        }
+
+        recipe.setStatus(RecipeStatus.REJECTED);
+        return recipeRepository.save(recipe);
+    }
+
 }
