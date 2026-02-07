@@ -1,11 +1,16 @@
 package com.hostel.recipe.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "recipes")
+@Getter
+@Setter
+
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +28,13 @@ public class Recipe {
     @Column(nullable = false)
     private Integer cookTime;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RecipeStatus status;
+
 
     public Recipe() {
         this.createdAt = LocalDateTime.now();

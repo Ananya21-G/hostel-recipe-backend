@@ -1,5 +1,11 @@
 package com.hostel.recipe.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+
 public class RecipeResponseDTO {
 
     private Long id;
