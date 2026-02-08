@@ -1,5 +1,6 @@
 package com.hostel.recipe.service;
 
+import com.hostel.recipe.dto.AdminRecipeReviewDTO;
 import com.hostel.recipe.dto.RecipeResponseDTO;
 import com.hostel.recipe.dto.RecipeSubmitRequestDTO;
 import com.hostel.recipe.entity.Recipe;
@@ -33,16 +34,22 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
 
-    public RecipeResponseDTO rejectRecipe(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId)
+    public RecipeResponseDTO reviewRecipe(AdminRecipeReviewDTO reviewDTO) {
+
+        Recipe recipe = recipeRepository.findById(reviewDTO.getRecipeId())
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
 
         if (recipe.getStatus() != RecipeStatus.PENDING) {
-            throw new RuntimeException("Only pending recipes can be rejected");
+            throw new RuntimeException("Only pending recipes can be reviewed");
         }
 
-        recipe.setStatus(RecipeStatus.REJECTED);
+        if (reviewDTO.getDecision() == RecipeStatus.PENDING) {
+            throw new RuntimeException("Invalid review decision");
+        }
+
+        recipe.setStatus(reviewDTO.getDecision());
         Recipe savedRecipe = recipeRepository.save(recipe);
+
         return mapToResponseDTO(savedRecipe);
     }
 
