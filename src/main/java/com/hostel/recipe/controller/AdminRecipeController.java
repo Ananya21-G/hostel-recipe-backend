@@ -1,5 +1,6 @@
 package com.hostel.recipe.controller;
 
+import com.hostel.recipe.dto.AdminRecipeReviewDTO;
 import com.hostel.recipe.dto.RecipeResponseDTO;
 import com.hostel.recipe.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,8 @@ public class AdminRecipeController {
         this.recipeService = recipeService;
     }
 
-    @PutMapping("/{id}/reject")
-    public RecipeResponseDTO rejectRecipe(@PathVariable Long id) {
-        return recipeService.rejectRecipe(id);
+    @PutMapping("/review")
+    public RecipeResponseDTO reviewRecipe(@RequestBody AdminRecipeReviewDTO reviewDTO) {
+        return recipeService.reviewRecipe(reviewDTO);
     }
 }
