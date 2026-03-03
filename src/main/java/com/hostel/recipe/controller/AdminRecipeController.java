@@ -5,6 +5,8 @@ import com.hostel.recipe.dto.RecipeResponseDTO;
 import com.hostel.recipe.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/recipes")
 public class AdminRecipeController {
@@ -18,5 +20,10 @@ public class AdminRecipeController {
     @PutMapping("/review")
     public RecipeResponseDTO reviewRecipe(@RequestBody AdminRecipeReviewDTO reviewDTO) {
         return recipeService.reviewRecipe(reviewDTO);
+    }
+
+    @GetMapping("/pending")
+    public List<RecipeResponseDTO> getPendingRecipes() {
+        return recipeService.getPendingRecipes();
     }
 }

@@ -5,6 +5,8 @@ import com.hostel.recipe.dto.RecipeResponseDTO;
 import com.hostel.recipe.dto.RecipeSubmitRequestDTO;
 import com.hostel.recipe.entity.Recipe;
 import com.hostel.recipe.entity.RecipeStatus;
+import com.hostel.recipe.exception.InvalidRecipeStatusException;
+import com.hostel.recipe.exception.RecipeNotFoundException;
 import com.hostel.recipe.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 
@@ -37,20 +39,27 @@ public class RecipeService {
     public RecipeResponseDTO reviewRecipe(AdminRecipeReviewDTO reviewDTO) {
 
         Recipe recipe = recipeRepository.findById(reviewDTO.getRecipeId())
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException(reviewDTO.getRecipeId()));
+
 
         if (recipe.getStatus() != RecipeStatus.PENDING) {
-            throw new RuntimeException("Only pending recipes can be reviewed");
+            throw new InvalidRecipeStatusException("Only pending recipes can be reviewed");
         }
 
         if (reviewDTO.getDecision() == RecipeStatus.PENDING) {
-            throw new RuntimeException("Invalid review decision");
+            throw new InvalidRecipeStatusException("Invalid review decision");
         }
 
         recipe.setStatus(reviewDTO.getDecision());
         Recipe savedRecipe = recipeRepository.save(recipe);
 
         return mapToResponseDTO(savedRecipe);
+    }
+    public List<RecipeResponseDTO> getPendingRecipes() {
+        return recipeRepository.findByStatus(RecipeStatus.PENDING)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     private Recipe mapToEntity(RecipeSubmitRequestDTO dto) {
