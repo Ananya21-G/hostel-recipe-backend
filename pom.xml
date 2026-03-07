@@ -82,6 +82,13 @@
 			<version>9.1.0.Final</version> <!-- Check for latest version -->
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.bucket4j</groupId>
+			<artifactId>bucket4j-core</artifactId>
+			<version>8.7.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
